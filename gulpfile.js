@@ -1,10 +1,13 @@
 var browserify = require('browserify'),
     clean = require('gulp-clean'),
     concat = require('gulp-concat'),
+    ecstatic = require('ecstatic'),
     gulp = require('gulp'),
+    http = require('http'),
     imagemin = require('gulp-imagemin'),
-    livereload = require('gulp-livereload'),
     jade = require('gulp-jade'),
+    livereload = require('gulp-livereload'),
+    lrserver = require('tiny-lr')(),
     minifyCss = require('gulp-minify-css'),
     rename = require('gulp-rename'),
     sass = require('gulp-sass'),
@@ -12,11 +15,11 @@ var browserify = require('browserify'),
 
     // Paths
     paths = {
-        styles: ['./lib/scss/**/*.scss'],
-        templates: ['./lib/jade/**/*.jade'],
-        scripts: ['./lib/scripts/**/*.js'],
+        styles: ['./lib/styles/**/*'],
+        templates: ['./lib/templates/**/*'],
+        scripts: ['./lib/scripts/**/*'],
         components: ['./lib/components/**/*'],
-        images: ['./lib/images/**/*']
+        images: ['./lib/images/**']
     };
 
 
@@ -28,15 +31,15 @@ gulp.task('scripts', function(){
     .bundle({debug: true})
     .pipe(source('bundle.js'))
     .pipe(gulp.dest('./www/js/'))
-    .pipe(livereload());
+    .pipe(livereload(lrserver));
 });
 
 
 // Styles
 // ======
 
-gulp.task('styles', function(done) {
-    gulp.src('./scss/ionic.app.scss')
+gulp.task('styles', function() {
+    gulp.src('./lib/styles/ionic.app.scss')
     .pipe(sass())
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
@@ -44,7 +47,7 @@ gulp.task('styles', function(done) {
     }))
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest('./www/css/'))
-    .pipe(livereload());
+    .pipe(livereload(lrserver));
 });
 
 
@@ -55,18 +58,18 @@ gulp.task('images', function () {
     gulp.src(paths.images)
     .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
     .pipe(gulp.dest('./www/img/'))
-    .pipe(livereload());
+    .pipe(livereload(lrserver));
 });
 
 
 // Templates
 // =========
 
-gulp.task('templates', function (done) {
+gulp.task('templates', function () {
     return gulp.src(paths.templates)
     .pipe(jade())
     .pipe(gulp.dest('./www/templates/'))
-    .pipe(livereload());
+    .pipe(livereload(lrserver));
 });
 
 
@@ -79,12 +82,19 @@ gulp.task('components', function(){
 });
 
 
+// Static Serve
+// ============
+
+gulp.task('serve', function() {
+    http.createServer(ecstatic({ root: __dirname + '/www/' })).listen(8000);
+    lrserver.listen(35729);
+});
+
+
 // Helpers
 // =======
 
-gulp.task('default', ['clean'], function(){
-    gulp.start('styles', 'scripts', 'images', 'templates', 'components', 'watch');
-});
+gulp.task('default', ['clean', 'styles', 'scripts', 'images', 'templates', 'components', 'watch', 'serve']);
 
 
 gulp.task('watch', function() {
