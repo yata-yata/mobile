@@ -1,5 +1,6 @@
-ion-view(title='Search')
+ion-view(title='Todos')
   ion-nav-buttons(side='left')
     button.button.button-icon.icon.ion-navicon(menu-toggle='left')
   ion-content.has-header
-    h1 Not Search
+    ion-list
+      ion-item(ng-repeat="todo in todos") {{todo.title}} is {{todo.status}}
