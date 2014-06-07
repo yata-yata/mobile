@@ -1,6 +1,11 @@
 Mobile
 ======
 
+## Start Project
+```
+gulp
+```
+
 ## Updating Ionic
 
 To update to a new version of Ionic, open bower.json and change the version listed there.
