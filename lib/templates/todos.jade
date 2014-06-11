@@ -3,4 +3,5 @@ ion-view(title='Todos')
     button.button.button-icon.icon.ion-navicon(menu-toggle='left')
   ion-content.has-header
     ion-list
-      ion-item(ng-repeat="todo in todos") {{todo.title}} is {{todo.status}}
+      ion-item(ng-repeat='todo in todos', swipe-right='nextStatus(todo)')
+        | {{todo.title}} is {{todo.status}}
