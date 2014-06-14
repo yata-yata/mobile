@@ -22,6 +22,7 @@
     "vinyl-source-stream": "^0.1.1"
   },
   "main": "gulpfile.js",
+  "license": "Artistic-2.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "browser": "python -m SimpleHTTPServer 8000"
